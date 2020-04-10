@@ -6,6 +6,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.math.BigDecimal;
 
+/**
+ * Bank account holds the information about the amount of money, the currency code and the name of owner
+ */
 @Entity
 public class Account {
 

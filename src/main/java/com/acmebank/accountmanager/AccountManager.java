@@ -1,5 +1,7 @@
 package com.acmebank.accountmanager;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,8 +11,15 @@ import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Controller of this app
+ * <p>
+ * handle get balance request and transfer request
+ */
 @RestController
 public class AccountManager {
+
+    Logger logger = LoggerFactory.getLogger(AccountManager.class);
 
     @Autowired
     AccountRepository accountRepository;
@@ -21,24 +30,28 @@ public class AccountManager {
         return accountRepository.findById(accountId);
     }
 
-    @PostMapping("/transfer")
+    @PostMapping(value = "/transfer")
     @ResponseBody
-    public ResponseEntity transfer(@RequestBody Map<String, String> body) {
+    public ResponseEntity<String> transfer(@RequestParam Map<String, String> params) {
+        logger.info(params.toString());
 
         try {
-            long from = Long.parseLong(body.get("from"));
-            long to = Long.parseLong(body.get("to"));
-            BigDecimal amount = new BigDecimal(body.get("amount"));
+            long from = Long.parseLong(params.get("from"));
+            long to = Long.parseLong(params.get("to"));
+            BigDecimal amount = new BigDecimal(params.get("amount"));
 
             if (accountRepository.transfer(amount, from, to)) {
-                return new ResponseEntity(HttpStatus.OK);
+                return new ResponseEntity<>("Transaction complete", HttpStatus.OK);
             } else {
-                return new ResponseEntity(HttpStatus.BAD_REQUEST);
+                logger.warn("Received an invalid request");
+                return new ResponseEntity<>("Invalid request", HttpStatus.BAD_REQUEST);
             }
         } catch (NumberFormatException ex) {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            logger.warn("Invalid account format exception {0}", ex);
+            return new ResponseEntity<>("Invalid account or amount", HttpStatus.BAD_REQUEST);
         } catch (Exception ex) {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            logger.error("Exception {0} was thrown during transaction execution", ex);
+            return new ResponseEntity<>("Transaction failed", HttpStatus.BAD_REQUEST);
         }
     }
 }

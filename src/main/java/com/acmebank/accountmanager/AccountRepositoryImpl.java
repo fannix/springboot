@@ -5,15 +5,25 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.transaction.InvalidTransactionException;
 import java.math.BigDecimal;
 
+/**
+ * Implements the transfer functionality
+ */
 @Repository
 public class AccountRepositoryImpl implements AccountRepositoryCustom {
 
     @PersistenceContext
     EntityManager entityManager;
 
+    /**
+     * Execute the transfer of money from one account to another account
+     *
+     * @param amount amount to transfer
+     * @param fromId account to transfer money out of
+     * @param toId   account to transfer money into
+     * @return true if transfer complete, return false otherwise.
+     */
     @Transactional
     @Override
     public boolean transfer(BigDecimal amount, long fromId, long toId) {
