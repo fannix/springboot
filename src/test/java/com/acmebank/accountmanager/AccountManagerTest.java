@@ -63,7 +63,7 @@ public class AccountManagerTest {
                         .param("from", "1")
                         .param("to", "3")
                         .param("amount", "100")
-        ).andExpect(status().isBadRequest())
+        ).andExpect(status().isInternalServerError())
                 .andExpect(content().string("Invalid request"));
     }
 }

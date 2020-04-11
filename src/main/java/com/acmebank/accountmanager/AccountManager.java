@@ -44,14 +44,14 @@ public class AccountManager {
                 return new ResponseEntity<>("Transaction complete", HttpStatus.OK);
             } else {
                 logger.warn("Received an invalid request");
-                return new ResponseEntity<>("Invalid request", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("Invalid request", HttpStatus.INTERNAL_SERVER_ERROR);
             }
         } catch (NumberFormatException ex) {
             logger.warn("Invalid account format exception {0}", ex);
             return new ResponseEntity<>("Invalid account or amount", HttpStatus.BAD_REQUEST);
         } catch (Exception ex) {
             logger.error("Exception {0} was thrown during transaction execution", ex);
-            return new ResponseEntity<>("Transaction failed", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Transaction failed", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
